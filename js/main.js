@@ -1,23 +1,74 @@
 'use strict'
 
-// Form selector variable
+/*===============
+    Variables
+===============*/
 const fscForm = document.querySelector('form');
-
-// Name field selector variable
 const name = document.querySelector('#name');
-
-// Job title selector variables
+const email = document.querySelector('#mail');
 const jobTitle = document.querySelector('#title');
 const otherTitle = document.querySelector('#other-title');
+const design = document.querySelector('#design');
+const color = document.querySelectorAll('#color option');
+const shirtColor = document.querySelector('#color');
+const activitiesFS = document.querySelector('.activities');
+const allCheckboxes = document.querySelector('input[type="checkbox"]');
+const jsFrameworks = document.querySelector('input[name="js-frameworks"]');
+const jsLibs = document.querySelector('input[name="js-libs"]');
+const express = document.querySelector('input[name="express"]');
+const nodeJS = document.querySelector('input[name="node"]');
+const costElement = document.createElement('p');
+activitiesFS.appendChild(costElement);
+const paymentType = document.querySelector('#payment');
+const creditDiv = document.querySelector('#credit-card');
+const creditCard = document.querySelector('#cc-num');
+const zipCode = document.querySelector('#zip');
+const cvv = document.querySelector('#cvv');
+const paypalDiv = document.querySelector('#paypal');
+const bitcoinDiv = document.querySelector('#bitcoin');
+
+let totalCost = 0;
+
+/*===============
+    Functions
+===============*/
+
+const calculateCost = (cost) => {
+    totalCost = totalCost + cost;
+    if (totalCost > 0) {
+        costElement.textContent = "Total: $" + totalCost;
+    } else {
+        costElement.textContent = "";
+    };
+};
+
+const processCheckboxes = (checkedBox, isChecked, conflicted) => {
+    let cost = 0
+    if (isChecked) {
+        checkedBox === 'all' ? cost = 200 : cost = 100;
+        calculateCost(cost);
+        if (conflicted !== undefined) {
+            conflicted.disabled = true;
+            conflicted.parentNode.className = 'isDisabled'
+        }
+    } else {
+        checkedBox === 'all' ? cost = -200 : cost = -100;
+        calculateCost(cost);
+        if (conflicted !== undefined) {
+            conflicted.disabled = false;
+            conflicted.parentNode.className = ''
+        }
+    };
+}
+
+/*====================
+    Event Listeners
+====================*/
 
 // jobTitle event listener
 jobTitle.addEventListener('change', (event) => {
     event.target.value === 'other' ? otherTitle.style.display = '' : otherTitle.style.display = 'none';
 });
-
-// T-shirt design selector variables
-const design = document.querySelector('#design');
-const color = document.querySelectorAll('#color option');
 
 // T-Shirt design event listener
 design.addEventListener('change', (event) => {
@@ -40,61 +91,24 @@ design.addEventListener('change', (event) => {
     });
 });
 
-// Activities selector variables
-let totalCost = 0;
-const activitiesFS = document.querySelector('.activities');
-const costElement = document.createElement('p');
-activitiesFS.appendChild(costElement);
-
-const jsFrameworks = document.querySelector('input[name="js-frameworks"]');
-const jsLibs = document.querySelector('input[name="js-libs"]');
-const express = document.querySelector('input[name="express"]');
-const nodeJS = document.querySelector('input[name="node"]');
-
 activitiesFS.addEventListener('change', (event) => {
     switch (event.target.name) {
-        case 'all':
-            event.target.checked ? calculateCost(200) : calculateCost(-200);
-            break;
         case 'js-frameworks':
-        case 'js-libs':
-        case 'express':
-        case 'node':
-        case 'build-tools':
-        case 'npm':
-            event.target.checked ? calculateCost(100) : calculateCost(-100);
-            switch (event.target.name) {
-                case 'js-frameworks':
-                    event.target.checked ? express.disabled = true : express.disabled = false;
-                    break;
-                case 'js-libs':
-                    event.target.checked ? nodeJS.disabled = true : nodeJS.disabled = false;
-                    break;
-                case 'express':
-                    event.target.checked ? jsFrameworks.disabled = true : jsFrameworks.disabled = false;
-                    break;
-                case 'node':
-                    event.target.checked ? jsLibs.disabled = true : jsLibs.disabled = false;
-                    break;
-            }
+            processCheckboxes(event.target.name, event.target.checked, express);
             break;
+        case 'js-libs':
+            processCheckboxes(event.target.name, event.target.checked, nodeJS);
+            break;
+        case 'express':
+            processCheckboxes(event.target.name, event.target.checked, jsFrameworks);
+            break;
+        case 'node':
+            processCheckboxes(event.target.name, event.target.checked, jsLibs);
+            break;
+        default:
+            processCheckboxes(event.target.name, event.target.checked);
     }
 });
-
-const calculateCost = (cost) => {
-    totalCost = totalCost + cost;
-    if (totalCost > 0) {
-        costElement.textContent = "Total: $" + totalCost;
-    } else {
-        costElement.textContent = "";
-    };
-};
-
-// Payment DIV selector variables
-const paymentType = document.querySelector('#payment');
-const creditDiv = document.querySelector('#credit-card');
-const paypalDiv = document.querySelector('#paypal');
-const bitcoinDiv = document.querySelector('#bitcoin');
 
 paymentType.addEventListener('change', (event) => {
     switch (event.target.value) {
@@ -115,6 +129,10 @@ paymentType.addEventListener('change', (event) => {
             bitcoinDiv.style.display = '';
             break;
     }
+});
+
+fscForm.addEventListener('submit', (event) => {
+
 });
 
 window.addEventListener('DOMContentLoaded', (event) => {
