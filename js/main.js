@@ -61,6 +61,29 @@ const processCheckboxes = (checkedBox, isChecked, conflicted) => {
     };
 }
 
+const validateForm = () => {
+    let errorsExist = false;
+    if (name.value === '') {
+        name.previousElementSibling.className = 'error';
+        name.previousElementSibling.textContent = 'Name: (Please provide your name)'
+        errorsExist = true;
+    } else {
+        name.previousElementSibling.className = '';
+        name.previousElementSibling.textContent = 'Name:'
+    };
+
+    if (mail.value === '') {
+        mail.previousElementSibling.className = 'error';
+        mail.previousElementSibling.textContent = 'Email: (Please provide a valid email address)'
+        errorsExist = true;
+    } else {
+        mail.previousElementSibling.className = '';
+        mail.previousElementSibling.textContent = 'Email:'
+    };
+
+    return errorsExist;
+}
+
 /*====================
     Event Listeners
 ====================*/
@@ -132,7 +155,10 @@ paymentType.addEventListener('change', (event) => {
 });
 
 fscForm.addEventListener('submit', (event) => {
-
+    event.preventDefault();
+    if (!validateForm()) {
+        fscForm.submit();
+    }
 });
 
 window.addEventListener('DOMContentLoaded', (event) => {

@@ -32,6 +32,10 @@ a {
     text-decoration: none;
 }
 
+.error {
+    color: #FF0000;
+}
+
 
 /* ================================= 
   Form Element Styles
